@@ -5,6 +5,9 @@ public class MyAgent extends Agent
 {
     Random r;
     private String playerName;
+    private int numCols = myGame.getColumnCount(); //The number of columns in the game board
+    private int numRows = myGame.getRowCount(); //The number of rows in the game board
+    
 
     /**
      * Constructs a new agent, giving it the game and telling it whether it is Red or Yellow.
@@ -41,8 +44,8 @@ public class MyAgent extends Agent
     public void move()
     {
 
-        int CLOSE_TO_WIN = 2; //Two tokens in a line
-        int CAN_WIN = 3; //three tokens in a line
+        final int CLOSE_TO_WIN = 2; //Two tokens in a line
+        final int CAN_WIN = 3; //three tokens in a line
         
         int iCanWin = playerCanWin(iAmRed, CAN_WIN);
         int theyCanWin = playerCanWin(!iAmRed, CAN_WIN);
@@ -66,7 +69,7 @@ public class MyAgent extends Agent
             
         if(theyAreCloseToWin != -1)
         {
-            ArrayList arr = PositionToAvoid(iAmRed);
+            ArrayList arr = positionToAvoid(iAmRed);
             System.out.println("Column List To Avoid= "+ arr.toString());
             if (arr.indexOf(theyAreCloseToWin) != -1)
             {
@@ -82,7 +85,7 @@ public class MyAgent extends Agent
             
         if(iAmCloseToWin != -1)
         {
-            ArrayList arr = PositionToAvoid(iAmRed);
+            ArrayList arr = positionToAvoid(iAmRed);
             System.out.println("Column List To Avoid = "+ arr.toString());
             if (arr.indexOf(iAmCloseToWin) != -1)
             {
@@ -98,11 +101,11 @@ public class MyAgent extends Agent
 
         System.out.println("Random Move");
         int rand = randomMove();
-        ArrayList arr = PositionToAvoid(iAmRed);
+        ArrayList arr = positionToAvoid(iAmRed);
         System.out.println("Column List To Avoid = "+ arr.toString());
         int count = 0;
         
-        while(arr.indexOf(rand) != -1 && count < myGame.getColumnCount())
+        while(arr.indexOf(rand) != -1 && count < numCols)
         {
             rand = randomMove();
             System.out.println("change To Column "+rand);
@@ -166,10 +169,10 @@ public class MyAgent extends Agent
     public int randomMove()
     {
         r = new Random();
-        int i = r.nextInt(myGame.getColumnCount());
+        int i = r.nextInt(numCols);
         while (getLowestEmptyIndex(myGame.getColumn(i)) == -1)
         {
-            i = r.nextInt(myGame.getColumnCount());
+            i = r.nextInt(numCols);
         }
         return i;
     }
@@ -179,7 +182,8 @@ public class MyAgent extends Agent
      * 
      * Check to see if Player has a winning move available to it. Implement this method to return what column would
      * allow the Player to win or one step away from winning.
-     * @param iAmRed If the color of the player are red. numberInLine Number of token in a line. If you want to check if the player can win in one step, set it to 3. If you want to check if the player can win in two steps, set it to 2.
+     * @param iAmRed If the color of the player are red. 
+     * @param numberInLine Number of token in a line. If you want to check if the player can win in one step, set it to 3. If you want to check if the player can win in two steps, set it to 2.
      * @return the column that would allow the Palyer to win, return -1 if no column can win or is one step away from winning.
      */
     
@@ -196,10 +200,10 @@ public class MyAgent extends Agent
             colorSum = 0;
         }
         
-        for (int i = 0; i < myGame.getColumnCount(); i++)
+        for (int i = 0; i < numCols; i++)
         {
             
-            for (int j = myGame.getRowCount() - 1; j >= 0; j--)
+            for (int j = numRows - 1; j >= 0; j--)
             {
                   if (j - 3 >= 0)
                   {
@@ -218,7 +222,7 @@ public class MyAgent extends Agent
                         }
                   }
                   
-                  if (i + 3 < myGame.getColumnCount())
+                  if (i + 3 < numCols)
                   {
                         int pos1filled = myGame.getColumn(i).getSlot(j).getIsFilled()?1:0;
                         int pos2filled = myGame.getColumn(i+1).getSlot(j).getIsFilled()?1:0;
@@ -237,7 +241,7 @@ public class MyAgent extends Agent
                             {
                                 if(posfilled[ii] == 0)
                                 {
-                                    if(j == myGame.getRowCount() - 1 || (j < myGame.getRowCount() - 1 && myGame.getColumn(i+ii).getSlot(j+1).getIsFilled())) // If the slot under the unfilled slot is filled
+                                    if(j == numRows - 1 || (j < numRows - 1 && myGame.getColumn(i+ii).getSlot(j+1).getIsFilled())) // If the slot under the unfilled slot is filled
                                     {
                                         return i+ii;
                                     }
@@ -247,7 +251,7 @@ public class MyAgent extends Agent
                         }
                   }
                   
-                  if (i + 3 < myGame.getColumnCount() && j - 3 >= 0)
+                  if (i + 3 < numCols && j - 3 >= 0)
                   {
                         int pos1filled = myGame.getColumn(i).getSlot(j).getIsFilled()?1:0;
                         int pos2filled = myGame.getColumn(i+1).getSlot(j-1).getIsFilled()?1:0;
@@ -266,7 +270,7 @@ public class MyAgent extends Agent
                             {
                                 if(posfilled[ii] == 0)
                                 {
-                                    if(j - ii == myGame.getRowCount() - 1 || (j - ii < myGame.getRowCount() - 1  && myGame.getColumn(i+ii).getSlot(j-ii+1).getIsFilled())) // If the slot under the unfilled slot is filled
+                                    if(j - ii == numRows - 1 || (j - ii < numRows - 1  && myGame.getColumn(i+ii).getSlot(j-ii+1).getIsFilled())) // If the slot under the unfilled slot is filled
                                     {
                                         return i+ii;
                                     }
@@ -294,7 +298,7 @@ public class MyAgent extends Agent
                             {
                                 if(posfilled[ii] == 0)
                                 {
-                                    if(j - ii == myGame.getRowCount() - 1 || (j - ii < myGame.getRowCount() - 1 && myGame.getColumn(i-ii).getSlot(j-ii+1).getIsFilled())) // If the slot under the unfilled slot is filled
+                                    if(j - ii == numRows - 1 || (j - ii < numRows - 1 && myGame.getColumn(i-ii).getSlot(j-ii+1).getIsFilled())) // If the slot under the unfilled slot is filled
                                     {
                                         return i-ii;
                                     }
@@ -313,11 +317,13 @@ public class MyAgent extends Agent
      * Check to see if the column the agent is going to fill should be avoided, otherwise opponent will win.
      * 
      * Implement this method to return which column the agent should avoid.
+     * 
+     * @param iAmRed If the color of the agent is red
      *
      * @return the column that the agent should avoid.
      */
     
-    public ArrayList PositionToAvoid(boolean iAmRed)
+    public ArrayList positionToAvoid(boolean iAmRed)
     {
         int colorSum;
         if(iAmRed)
@@ -331,11 +337,11 @@ public class MyAgent extends Agent
         
         ArrayList<Integer> colToAvoid = new ArrayList<Integer>(); //list of column should be avoided.
 
-        for (int i = 0; i < myGame.getColumnCount(); i++)
+        for (int i = 0; i < numCols; i++)
         {
-            for (int j = myGame.getRowCount() - 1; j >= 0; j--)
+            for (int j = numRows - 1; j >= 0; j--)
             {                                    
-                  if (i + 3 < myGame.getColumnCount())
+                  if (i + 3 < numCols)
                   {
                         int pos1filled = myGame.getColumn(i).getSlot(j).getIsFilled()?1:0;
                         int pos2filled = myGame.getColumn(i+1).getSlot(j).getIsFilled()?1:0;
@@ -354,11 +360,11 @@ public class MyAgent extends Agent
                             {
                                 if(posfilled[ii] == 0)
                                 {
-                                    if(j == myGame.getRowCount() - 1) // If slot j-i is on the bottom of the panel.
+                                    if(j == numRows - 1) // If slot j-i is on the bottom of the panel.
                                     {
                                         continue;
                                     }
-                                    else if(myGame.getColumn(i+ii).getSlot(j+1).getIsFilled() == false && j + 1 == myGame.getRowCount() - 1) // If slot j is unfilled, j+1 is unfilled and also is the bottom of the panel.
+                                    else if(myGame.getColumn(i+ii).getSlot(j+1).getIsFilled() == false && j + 1 == numRows - 1) // If slot j is unfilled, j+1 is unfilled and also is the bottom of the panel.
                                     {
                                         colToAvoid.add(i+ii);
                                     }
@@ -372,7 +378,7 @@ public class MyAgent extends Agent
                         }
                   }
                   
-                  if (i + 3 < myGame.getColumnCount() && j - 3 >= 0)
+                  if (i + 3 < numCols && j - 3 >= 0)
                   {
                         int pos1filled = myGame.getColumn(i).getSlot(j).getIsFilled()?1:0;
                         int pos2filled = myGame.getColumn(i+1).getSlot(j-1).getIsFilled()?1:0;
@@ -391,11 +397,11 @@ public class MyAgent extends Agent
                             {
                                 if(posfilled[ii] == 0)
                                 {
-                                    if(j - ii == myGame.getRowCount() - 1) // If slot j-ii is on the bottom of the panel.
+                                    if(j - ii == numRows - 1) // If slot j-ii is on the bottom of the panel.
                                     {
                                         continue;
                                     }
-                                    else if(myGame.getColumn(i+ii).getSlot(j-ii+1).getIsFilled() == false && j -ii + 1 == myGame.getRowCount() - 1) //If slot j-ii is unfilled, j-ii+1 is unfilled and also is the bottom of the panel.
+                                    else if(myGame.getColumn(i+ii).getSlot(j-ii+1).getIsFilled() == false && j -ii + 1 == numRows - 1) //If slot j-ii is unfilled, j-ii+1 is unfilled and also is the bottom of the panel.
                                     {
                                         colToAvoid.add(i+ii);
                                     }
@@ -427,11 +433,11 @@ public class MyAgent extends Agent
                             {
                                 if(posfilled[ii] == 0)
                                 {
-                                    if(j - ii == myGame.getRowCount() - 1) // If slot j-ii is on the bottom of the panel.
+                                    if(j - ii == numRows - 1) // If slot j-ii is on the bottom of the panel.
                                     {
                                         continue;
                                     }
-                                    else if(myGame.getColumn(i-ii).getSlot(j-ii+1).getIsFilled() == false && j -ii + 1 == myGame.getRowCount() - 1) // If slot j-ii is unfilled, j-ii+1 is unfilled and also is the bottom of the panel.
+                                    else if(myGame.getColumn(i-ii).getSlot(j-ii+1).getIsFilled() == false && j -ii + 1 == numRows - 1) // If slot j-ii is unfilled, j-ii+1 is unfilled and also is the bottom of the panel.
                                     {
                                         colToAvoid.add(i-ii);
                                     }
@@ -451,7 +457,7 @@ public class MyAgent extends Agent
     /**
      * Set the name of this agent.
      *
-     * @return No value
+     * @param playerName name of this agent
      */
 
     public void setName(String playerName)
